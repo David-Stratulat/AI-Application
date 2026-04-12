@@ -6,7 +6,7 @@ app = Flask(__name__, template_folder="templates")
 
 @app.route('/products', methods=['GET']) 
 def get_products():
-    content = get_allKnowledge() #Extragem continutul din baza de date
+    content = get_allKnowledge() 
     if not content:
         return jsonify({"eroare": "Nu exista produse"})
     return jsonify(content)
@@ -19,21 +19,32 @@ def get_product(product_id):
     return jsonify(content)
     
 
-@app.route('/add_product/', methods=['POST'])
+@app.route('/add_product', methods=['POST'])
 def add_product():
-    data = request.get_json()
-    name = data.get('name')
-    price = data.get('price')
-    if not name or not price:
-        return jsonify({"eroare": "Lipsesc date (nume sau pret)"}), 400
-    try: #Exception handling, blocul de cod "asculta" exceptii(erori) si returneaza in functie de eroare
+    try:
+        data = request.get_json()
+    except Exception:
+        return jsonify({"eroare": "JSON invalid"}), 400
+
+    try:
+        name = data.get('name')
+        price = data.get('price')
+
+        if not name or not price:
+            return jsonify({"eroare": "Lipsesc date"}), 400
+
         item = add_knowledge(name, price)
-        return jsonify({
-            "message": "Produsul a fost adăugat",
-            "data": item
-        }), 201
-    except DuplicateException as e: #Nu se mai returneaza obiectul, ci doar eroarea
+        return jsonify({"message": "Produs adăugat", "data": item}), 201
+
+    except DuplicateException as e:
         return jsonify({"eroare": str(e)}), 409
+
+    except Exception as e:
+        return jsonify({"eroare": "Eroare internă"}), 500
+    
+@app.errorhandler(Exception)
+def handle_exception(e):
+     return jsonify({"eroare": "Eroare internă neprevăzută"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
