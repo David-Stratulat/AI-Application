@@ -22,46 +22,42 @@ def get_allKnowledge():
         return content
         
 def get_knowledge(id):
-    con = get_connection()
-    cur = con.cursor()
-    cur.execute(
-    "SELECT * FROM products WHERE id = ?", 
-    (id,) 
-    )
-    row = cur.fetchone()
-    con.close() 
-    if not row:
-        return None
+    with get_connection() as con:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM products WHERE id = ?", (id,))
+        row = cur.fetchone()
 
-    data = {
-        "id":row[0],
-        "name":row[1],
-        "price":row[2]
-    }
-    return data
+        if not row:
+            return None
+
+        return {
+            "id": row[0],
+            "name": row[1],
+            "price": row[2]
+        }   
 
 def add_knowledge(name, price):
-    con = get_connection()
-    cur = con.cursor()
+    with get_connection() as con:
+        cur = con.cursor()
 
-    cur.execute(
-    "SELECT 1 FROM products WHERE LOWER(name) = LOWER(?)",
-    (name,)
-    ) 
-    if cur.fetchone():
-        con.close() 
-        raise DuplicateException("Product already exists") 
+        # verificam duplicatul
+        cur.execute(
+            "SELECT 1 FROM products WHERE LOWER(name) = LOWER(?)",
+            (name,)
+        )
+        if cur.fetchone():
+            raise DuplicateException("Product already exists")
 
-    cur.execute(
-    "INSERT INTO products (name, price) VALUES (?, ?)",
-    (name, price)
-    )
-    new_id = cur.lastrowid
-    con.commit() 
-    con.close()
-    item = {
-        "id": new_id,
-        "name": name,
-        "price": price
-    }
-    return item 
+        # inseram
+        cur.execute(
+            "INSERT INTO products (name, price) VALUES (?, ?)",
+            (name, price)
+        )
+
+        new_id = cur.lastrowid
+
+        return {
+            "id": new_id,
+            "name": name,
+            "price": price
+        }

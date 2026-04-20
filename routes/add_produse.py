@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from service import add_knowledge
 
-add_bp = Blueprint('add_produse', __name__)
+add_bp = Blueprint('add', __name__)
 
 @add_bp.route('/add_produs', methods=['POST'])
 def add_produs():
@@ -17,4 +17,4 @@ def add_produs():
             "data": item
         }), 201
     except Exception as e: 
-        return jsonify({"eroare": str(e)}),
+        return jsonify({"eroare": str(e)}),500
