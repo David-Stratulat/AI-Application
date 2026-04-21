@@ -14,7 +14,7 @@ def add_produs():
         item = add_knowledge(name, price)
         return jsonify({
             "message": "Produsul a fost adăugat",
-            "data": item
+            "date": item
         }), 201
     except Exception as e: 
         return jsonify({"eroare": str(e)}),500
