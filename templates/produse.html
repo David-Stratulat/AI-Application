@@ -18,7 +18,6 @@
 
     <div id="mesaj" class="mesaj"></div>
 
-    <!-- Tabelul este ascuns pana soseste raspunsul -->
     <div id="container-tabel" style="display:none; margin-top:1.2rem;">
         <table>
             <thead>
@@ -75,7 +74,7 @@ async function incarcaProduse() {
         afiseazaMesaj('succes', `${date.length} produs(e) incarcate cu succes.`);
 
     } catch (err) {
-        // Eroare de retea (serverul nu raspunde)
+
         afiseazaMesaj('eroare', 'Nu s-a putut conecta la server. Verifica daca aplicatia ruleaza.');
     }
 }

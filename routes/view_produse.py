@@ -18,7 +18,7 @@ def get_produs(produs_id):
     try:
         content = get_knowledge(produs_id) 
         if not content:
-            return jsonify({"eroare": "Produsul nu a fost gasit"})
+            return jsonify({"eroare": "Produsul nu a fost gasit"}), 404
         return jsonify(content)
     except Exception as e:
-        return jsonify({"eroare": str(e)}),404
+        return jsonify({"eroare": str(e)}), 500

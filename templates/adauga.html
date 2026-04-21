@@ -38,10 +38,7 @@
 
     <button class="btn-primar" onclick="adaugaProdus()">Adauga produs</button>
 
-    <div id="mesaj" class="mesaj"></div>
-
-    <!-- 🔥 Mesajul verde de confirmare -->
-    <div id="confirmare-msg" class="mesaj-succes" style="display:none;"></div>
+    <div id="mesaj-add" class="mesaj"></div>
 
     <div id="confirmare" style="display:none; margin-top:1.2rem;">
         <table>
@@ -63,32 +60,23 @@
     </div>
 </div>
 
-<style>
-.mesaj-succes {
-    background: #d4f8d4;
-    border-left: 4px solid #2e9b2e;
-    padding: 0.8rem 1rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    color: #1f6b1f;
-    font-weight: 600;
-    border-radius: 4px;
-    font-size: 0.95rem;
-}
-</style>
-
 <script>
+function afiseazaMesaj(tip, text) {
+    const el = document.getElementById('mesaj-add');
+    el.textContent = text;
+    el.className = `mesaj ${tip}`;
+    el.style.display = 'block';
+}
+
 async function adaugaProdus() {
     const nume = document.getElementById('campNume').value.trim();
     const pret = document.getElementById('campPret').value.trim();
-    const mesajEl = document.getElementById('mesaj');
+    const mesajEl = document.getElementById('mesaj-add');
     const confirmare = document.getElementById('confirmare');
-    const confMsg = document.getElementById('confirmare-msg');
 
     mesajEl.style.display = 'none';
     mesajEl.className = 'mesaj';
     confirmare.style.display = 'none';
-    confMsg.style.display = 'none';
 
     if (!nume) {
         afiseazaMesaj('eroare', 'Campul "Nume produs" este obligatoriu.');
@@ -129,9 +117,7 @@ async function adaugaProdus() {
 
         confirmare.style.display = 'block';
 
-        // 🔥 Mesajul verde deasupra tabelului
-        confMsg.textContent = `Produsul "${date.date.name}" a fost adăugat cu succes!`;
-        confMsg.style.display = 'block';
+        afiseazaMesaj('succes', `Produsul "${date.date.name}" a fost adăugat cu succes!`);
 
         document.getElementById('campNume').value = '';
         document.getElementById('campPret').value = '';
