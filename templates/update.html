@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Update Pret{% endblock %}
+{% block continut %}
+
+
+
+<div class="card">
+    <button class="btn-primar" onclick="incarcaProduse()">Incarca produse</button>
+
+    <div id="mesaj" class="mesaj"></div>
+
+    <div id="container-tabel" style="display:none; margin-top:1.2rem;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nume</th>
+                    <th>Pret</th>
+                    <th>Actiune</th>
+                </tr>
+            </thead>
+            <tbody id="corp-tabel"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+async function incarcaProduse() {
+    const raspuns = await fetch('/produse');
+    const date = await raspuns.json();
+
+    const corp = document.getElementById('corp-tabel');
+    corp.innerHTML = '';
+
+    date.forEach(p => {
+        const rand = document.createElement('tr');
+
+        rand.innerHTML = `
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>
+                <input type="number" value="${p.price}" id="pret-${p.id}">
+            </td>
+            <td>
+                <button onclick="updatePret(${p.id})">Update</button>
+            </td>
+        `;
+
+        corp.appendChild(rand);
+    });
+
+    document.getElementById('container-tabel').style.display = 'block';
+}
+function verificaModificare(id, pretInitial, input) {
+    const btn = input.parentElement.nextElementSibling.querySelector('button');
+
+    if (parseFloat(input.value) === pretInitial) {
+        btn.disabled = true;
+        btn.style.opacity = 0.5;
+    } else {
+        btn.disabled = false;
+        btn.style.opacity = 1;
+    }
+}
+
+async function updatePret(id) {
+    const input = document.getElementById(`pret-${id}`);
+    const noulPret = input.value;
+
+    const raspuns = await fetch(`/update/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ price: noulPret })
+    });
+
+    const date = await raspuns.json();
+    const mesaj = document.getElementById('mesaj');
+    mesaj.textContent = date.mesaj;
+}
+</script>
+
+{% endblock %}

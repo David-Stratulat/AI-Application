@@ -52,3 +52,30 @@ def add_knowledge(name, price):
             "price": row[2]
         }
         return item 
+    
+def update_knowledge(id, name=None, price=None):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        cur.execute("SELECT * FROM products WHERE id = ?", (id,))
+        row = cur.fetchone()
+
+        if not row:
+            return None  
+            
+        if name is not None:
+            cur.execute("UPDATE products SET name = ? WHERE id = ?", (name, id))
+
+        if price is not None:
+            cur.execute("UPDATE products SET price = ? WHERE id = ?", (price, id))
+
+        con.commit()
+
+        cur.execute("SELECT * FROM products WHERE id = ?", (id,))
+        updated = cur.fetchone()
+
+        return {
+            "id": updated[0],
+            "name": updated[1],
+            "price": updated[2]
+        }

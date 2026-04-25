@@ -17,3 +17,7 @@ def pagina_cauta():
 @frontend_bp.route('/pagina/add_produs')
 def pagina_adauga():
     return render_template('adauga.html')
+
+@frontend_bp.route('/pagina/update_produs')
+def pagina_update():
+    return render_template('update.html')
