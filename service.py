@@ -61,10 +61,10 @@ def update_knowledge(id, name=None, price=None):
         row = cur.fetchone()
 
         if not row:
-            return None  
-            
-        if name is not None:
-            cur.execute("UPDATE products SET name = ? WHERE id = ?", (name, id))
+            return {
+                "status": 400,
+                "eroare": "Produsul nu exista"
+            }
 
         if price is not None:
             cur.execute("UPDATE products SET price = ? WHERE id = ?", (price, id))
@@ -75,7 +75,10 @@ def update_knowledge(id, name=None, price=None):
         updated = cur.fetchone()
 
         return {
-            "id": updated[0],
-            "name": updated[1],
-            "price": updated[2]
+            "data": {
+                "id": updated[0],
+                "name": updated[1],
+                "price": updated[2]
+            }
         }
+
