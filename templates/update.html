@@ -40,7 +40,7 @@ async function incarcaProduse() {
                 <input type="number" value="${p.price}" id="pret-${p.id}">
             </td>
             <td>
-                <button onclick="updatePret(${p.id})">Update</button>
+                <button onclick="updatePret(${p.id}, this)">Update</button>
             </td>
         `;
 
@@ -50,26 +50,39 @@ async function incarcaProduse() {
     document.getElementById('container-tabel').style.display = 'block';
 }
 
-async function updatePret(id) {
+
+async function updatePret(id, btn) {
     const input = document.getElementById(`pret-${id}`);
     const noulPret = input.value;
+    
+    btn.disabled = true;
+    btn.textContent = "Se actualizeaza...";
 
-    const raspuns = await fetch(`/update/${id}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ price: noulPret })
-    });
+    try {
+        const raspuns = await fetch(`/update/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ price: noulPret })
+        });
 
-    const date = await raspuns.json();
+        const date = await raspuns.json();
 
-    if (date.status === 200) {
-        afiseazaMesaj('succes', date.mesaj);
-    } else {
-        afiseazaMesaj('eroare', date.eroare || 'A aparut o eroare la actualizare.');
+        if (raspuns.ok) {
+            afiseazaMesaj('succes', date.mesaj || "Actualizat cu succes!");
+        } else {
+            afiseazaMesaj('eroare', date.eroare || 'A aparut o eroare la actualizare.');
+        }
+
+    } catch (err) {
+        afiseazaMesaj('eroare', 'Eroare de retea.');
     }
+
+    btn.disabled = false;
+    btn.textContent = "Update";
 }
+
 
 function afiseazaMesaj(tip, text) {
     const el = document.getElementById('mesaj');

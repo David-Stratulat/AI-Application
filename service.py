@@ -75,10 +75,10 @@ def update_knowledge(id, name=None, price=None):
         updated = cur.fetchone()
 
         return {
+            "status": 200, 
             "data": {
                 "id": updated[0],
                 "name": updated[1],
                 "price": updated[2]
             }
         }
-
