@@ -53,32 +53,24 @@ def add_knowledge(name, price):
         }
         return item 
     
-def update_knowledge(id, name=None, price=None):
+def update_product_price(produs_id, new_price):
     with get_connection() as con:
         cur = con.cursor()
-
-        cur.execute("SELECT * FROM products WHERE id = ?", (id,))
+        cur.execute("SELECT id, name, price FROM products WHERE id = ?", (produs_id,))
+        product = cur.fetchone()
+        
+        if not product:
+            return None
+            
+        current_price = product[2]
+        
+        if float(new_price) == float(current_price):
+            raise Exception(f"Noul pret ({new_price}) este identic cu pretul actual.")
+        
+        cur.execute("UPDATE products SET price = ? WHERE id = ? RETURNING id, name, price", (new_price, produs_id))
         row = cur.fetchone()
-
-        if not row:
-            return {
-                "status": 400,
-                "eroare": "Produsul nu exista"
-            }
-
-        if price is not None:
-            cur.execute("UPDATE products SET price = ? WHERE id = ?", (price, id))
-
-        con.commit()
-
-        cur.execute("SELECT * FROM products WHERE id = ?", (id,))
-        updated = cur.fetchone()
-
         return {
-            "status": 200, 
-            "data": {
-                "id": updated[0],
-                "name": updated[1],
-                "price": updated[2]
-            }
+            "id": row[0],
+            "name": row[1],
+            "price": row[2]
         }
