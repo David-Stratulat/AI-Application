@@ -19,7 +19,7 @@ def get_allKnowledge():
         return content
         
         
-def get_knowledge(id):
+def get_product_by_id(id):
     with get_connection() as con:
         cur = con.cursor()
         cur.execute(
@@ -34,6 +34,31 @@ def get_knowledge(id):
             "price":row[2]
         }
         return data
+    
+def get_product_by_name(name):
+    with get_connection() as con:
+        cur = con.cursor()
+
+        cur.execute(
+            "SELECT * FROM products WHERE LOWER(name) LIKE LOWER(?)",
+            (f"%{name}%",)
+        )
+
+        rows = cur.fetchall()
+
+        if not rows:
+            return []
+
+        produse = []
+        for row in rows:
+            produse.append({
+                "id": row[0],
+                "name": row[1],
+                "price": row[2]
+            })
+
+        return produse
+
 
 def add_knowledge(name, price):
     with get_connection() as con:
